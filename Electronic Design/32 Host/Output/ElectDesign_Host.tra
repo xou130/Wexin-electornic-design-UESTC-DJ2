@@ -37,7 +37,7 @@
 ### ADS-LD Output File: '.\Output\ElectDesign_Host.axf'
 ### ADS-LD Command File: '.\Output\ElectDesign_Host.lnp'
 ### Checking for dirty Components...
-### Creating CmdFile '.\Output\ElectDesign_Host.lnp', Handle=0x00000CDC
+### Creating CmdFile '.\Output\ElectDesign_Host.lnp', Handle=0x00000D30
 ### Writing '.lnp' file
 ### ADS-LD Command file '.\Output\ElectDesign_Host.lnp' is ready.
 ### ADS-LD: About to start ADS-LD Thread.
