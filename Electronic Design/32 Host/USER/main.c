@@ -1,83 +1,248 @@
 #include "stm32f10x.h"
 #define uchar unsigned char
 #define uint unsigned int
-//Figure.wireless
-	uchar set_wireless_mode(uchar);
-/*
-1-5NRF24L01
-Power Down Mode
-Tx Mode
-Rx Mode
-Standby-1Mode
-Standby-2 Mode
-*/
-	uchar write_addrs(uchar);//TX RX
-	uchar write_tx_fifo(uchar);
-	uchar read_rx_fifo(uchar);	
-	//Figure.wireless Sub Functions
-	uchar rw_data(uchar byte);//SPI_RW
-	uchar send_data(void);//send and get info
-	//Figure.wireless Defines
-#define READ_REGNRF 0x00 // Define read command to register
-#define WRITE_REGNRF 0x20 // Define write command to register
-#define RD_RX_PLOAD 0x61 // Define RX payload register address
-#define WR_TX_PLOAD 0xA0 // Define TX payload register address
-#define FLUSH_TX 0xE1 // Define flush TX register command
-#define FLUSH_RX 0xE2 // Define flush RX register command
-#define REUSE_TX_PL 0xE3 // Define reuse TX payload register command
-#define NOP 0xFF // Define No Operation, might be used to read
-#define CONFIG 0x00 // 'Config' register address
-#define EN_AA 0x01 // 'Enable Auto Acknowledgment' register address
-#define EN_RXADDR 0x02 // 'Enabled RX addresses' register address
-#define SETUP_AW 0x03 // 'Setup address width' register address
-#define SETUP_RETR 0x04 // 'Setup Auto. Retrans' register address
-#define RF_CH 0x05 // 'RF channel' register address
-#define RF_SETUP 0x06 // 'RF setup' register address
-#define STATUS 0x07 // 'Status' register address
-#define OBSERVE_TX 0x08 // 'Observe TX' register address
-#define CD 0x09 // 'Carrier Detect' register address
-#define RX_ADDR_P0 0x0A // 'RX address pipe0' register address
-#define RX_ADDR_P1 0x0B // 'RX address pipe1' register address
-#define RX_ADDR_P2 0x0C // 'RX address pipe2' register address
-#define RX_ADDR_P3 0x0D // 'RX address pipe3' register address
-#define RX_ADDR_P4 0x0E // 'RX address pipe4' register address
-#define RX_ADDR_P5 0x0F // 'RX address pipe5' register address
-#define TX_ADDR 0x10 // 'TX address' register address
-#define RX_PW_P0 0x11 // 'RX payload width, pipe0' register address
-#define RX_PW_P1 0x12 // 'RX payload width, pipe1' register address
-#define RX_PW_P2 0x13 // 'RX payload width, pipe2' register address
-#define RX_PW_P3 0x14 // 'RX payload width, pipe3' register address
-#define RX_PW_P4 0x15 // 'RX payload width, pipe4' register address
-#define RX_PW_P5 0x16 // 'RX payload width, pipe5' register address
-#define FIFO_STATUS 0x17 // 'FIFO Status Register' register address
 
-//end of woreless defines
+void delayms(int m)
+{m*=10;while(m--);}
 
-//figure.TFT
+ //LCD size
 #define LCD_W 240
 #define LCD_H 320
-void tft_write_bus(uchar );
-void addr_set(unsigned int ,unsigned int ,unsigned int ,unsigned int );
-void LCD_ShowChar(u16 x,u16 y,u8 num,u8 mode);
-void LCD_ShowNum(u16 x,u16 y,u32 num,u8 len);
-void LCD_ShowChar(u16 x,u16 y,u8 num,u8 mode);//mode:叠加方式(1)非叠加方式(0)
-//refer：sample lcd.c
-//end of tft defines
 
 
+void LED_Init()
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOG, ENABLE);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;			 //??LED?? D2
+  	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  	GPIO_Init(GPIOG, &GPIO_InitStructure);
+}
 
 
+void LCD_Init()
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
+	GPIO_InitStructure.GPIO_Pin=GPIO_Pin_4|GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode=GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed=GPIO_Speed_50MHz;
+	GPIO_Init(GPIOC,&GPIO_InitStructure);
+	
+	GPIO_SetBits(GPIOB,GPIO_Pin_4);
+	GPIO_ResetBits(GPIOB,GPIO_Pin_4);
+	
+	GPIO_ResetBits(GPIOB,GPIO_Pin_5);
+	GPIO_SetBits(GPIOB,GPIO_Pin_5);
+	
+
+}//CS=B4,RST=B5,DC=B6,SCL=B7,SDA=B8
+
+void LCD_Writ_Bus(char data)
+{
+	int cnt;
+	for(cnt=0;cnt<8;cnt++)
+	{
+		if((data<<cnt)&0x80)GPIO_SetBits(GPIOB,GPIO_Pin_8);
+			else GPIO_ResetBits(GPIOB,GPIO_Pin_8);
+		GPIO_SetBits(GPIOB,GPIO_Pin_7);
+	
+		GPIO_ResetBits(GPIOB,GPIO_Pin_7);	
+	}
+}
+
+void LCD_WR_DATA8(char da)
+{
+	GPIO_SetBits(GPIOB,GPIO_Pin_6);
+	LCD_Writ_Bus(da);
+
+}
+
+void LCD_WR_DATA(int da)
+{
+  GPIO_SetBits(GPIOB,GPIO_Pin_6);
+	LCD_Writ_Bus(da>>8);
+	LCD_Writ_Bus(da);
+}
+
+void LCD_WR_REG(char da)	 
+{
+  GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+	LCD_Writ_Bus(da);
+}
+ void LCD_WR_REG_DATA(int reg,int da)
+{
+    LCD_WR_REG(reg);
+	LCD_WR_DATA(da);
+}
+
+void Address_set(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2)
+{  
+   LCD_WR_REG(0x2a);
+   LCD_WR_DATA8(x1>>8);
+   LCD_WR_DATA8(x1);
+   LCD_WR_DATA8(x2>>8);
+   LCD_WR_DATA8(x2); 
+   LCD_WR_REG(0x2b);
+   LCD_WR_DATA8(y1>>8);
+   LCD_WR_DATA8(y1);
+   LCD_WR_DATA8(y2>>8);
+   LCD_WR_DATA8(y2);
+   LCD_WR_REG(0x2C);
+}
+
+void LCD_Clear(u16 Color)
+{
+	u8 VH,VL;
+	u16 i,j;
+	VH=Color>>8;
+	VL=Color;	
+	Address_set(0,0,LCD_W-1,LCD_H-1);
+    for(i=0;i<LCD_W;i++)
+	 {
+	  for (j=0;j<LCD_H;j++)
+	   	{
+       LCD_WR_DATA8(VH);
+			 LCD_WR_DATA8(VL);	
+	    }
+	  }
+}
+void LCD_fInit(void)
+{
 
 
+   	GPIO_SetBits(GPIOB,GPIO_Pin_4);
 
+	   LCD_WR_REG_DATA(0,0);
 
+    GPIO_SetBits(GPIOB,GPIO_Pin_5);
+    delayms(5);	
+	GPIO_ResetBits(GPIOB,GPIO_Pin_5);
+	delayms(5);
+	GPIO_SetBits(GPIOB,GPIO_Pin_5);
+	GPIO_SetBits(GPIOB,GPIO_Pin_4);
+	delayms(5);
+	GPIO_ResetBits(GPIOB,GPIO_Pin_4);  
 
+		LCD_WR_REG(0xCB);  
+        LCD_WR_DATA8(0x39); 
+        LCD_WR_DATA8(0x2C); 
+        LCD_WR_DATA8(0x00); 
+        LCD_WR_DATA8(0x34); 
+        LCD_WR_DATA8(0x02); 
 
+        LCD_WR_REG(0xCF);  
+        LCD_WR_DATA8(0x00); 
+        LCD_WR_DATA8(0XC1); 
+        LCD_WR_DATA8(0X30); 
+ 
+        LCD_WR_REG(0xE8);  
+        LCD_WR_DATA8(0x85); 
+        LCD_WR_DATA8(0x00); 
+        LCD_WR_DATA8(0x78); 
+ 
+        LCD_WR_REG(0xEA);  
+        LCD_WR_DATA8(0x00); 
+        LCD_WR_DATA8(0x00); 
+ 
+        LCD_WR_REG(0xED);  
+        LCD_WR_DATA8(0x64); 
+        LCD_WR_DATA8(0x03); 
+        LCD_WR_DATA8(0X12); 
+        LCD_WR_DATA8(0X81); 
+
+        LCD_WR_REG(0xF7);  
+        LCD_WR_DATA8(0x20); 
+  
+        LCD_WR_REG(0xC0);    //Power control 
+        LCD_WR_DATA8(0x23);   //VRH[5:0] 
+ 
+        LCD_WR_REG(0xC1);    //Power control 
+        LCD_WR_DATA8(0x10);   //SAP[2:0];BT[3:0] 
+ 
+        LCD_WR_REG(0xC5);    //VCM control 
+        LCD_WR_DATA8(0x3e); //?????
+        LCD_WR_DATA8(0x28); 
+ 
+        LCD_WR_REG(0xC7);    //VCM control2 
+        LCD_WR_DATA8(0x86);  //--
+ 
+        LCD_WR_REG(0x36);    // Memory Access Control 
+        LCD_WR_DATA8(0x48); //C8	   //48 68??//28 E8 ??
+
+        LCD_WR_REG(0x3A);    
+        LCD_WR_DATA8(0x55); 
+
+        LCD_WR_REG(0xB1);    
+        LCD_WR_DATA8(0x00);  
+        LCD_WR_DATA8(0x18); 
+ 
+        LCD_WR_REG(0xB6);    // Display Function Control 
+        LCD_WR_DATA8(0x08); 
+        LCD_WR_DATA8(0x82);
+        LCD_WR_DATA8(0x27);  
+ 
+        LCD_WR_REG(0xF2);    // 3Gamma Function Disable 
+        LCD_WR_DATA8(0x00); 
+ 
+        LCD_WR_REG(0x26);    //Gamma curve selected 
+        LCD_WR_DATA8(0x01); 
+ 
+        LCD_WR_REG(0xE0);    //Set Gamma 
+        LCD_WR_DATA8(0x0F); 
+        LCD_WR_DATA8(0x31); 
+        LCD_WR_DATA8(0x2B); 
+        LCD_WR_DATA8(0x0C); 
+        LCD_WR_DATA8(0x0E); 
+        LCD_WR_DATA8(0x08); 
+        LCD_WR_DATA8(0x4E); 
+        LCD_WR_DATA8(0xF1); 
+        LCD_WR_DATA8(0x37); 
+        LCD_WR_DATA8(0x07); 
+        LCD_WR_DATA8(0x10); 
+        LCD_WR_DATA8(0x03); 
+        LCD_WR_DATA8(0x0E); 
+        LCD_WR_DATA8(0x09); 
+        LCD_WR_DATA8(0x00); 
+
+        LCD_WR_REG(0XE1);    //Set Gamma 
+        LCD_WR_DATA8(0x00); 
+        LCD_WR_DATA8(0x0E); 
+        LCD_WR_DATA8(0x14); 
+        LCD_WR_DATA8(0x03); 
+        LCD_WR_DATA8(0x11); 
+        LCD_WR_DATA8(0x07); 
+        LCD_WR_DATA8(0x31); 
+        LCD_WR_DATA8(0xC1); 
+        LCD_WR_DATA8(0x48); 
+        LCD_WR_DATA8(0x08); 
+        LCD_WR_DATA8(0x0F); 
+        LCD_WR_DATA8(0x0C); 
+        LCD_WR_DATA8(0x31); 
+        LCD_WR_DATA8(0x36); 
+        LCD_WR_DATA8(0x0F); 
+ 
+        LCD_WR_REG(0x11);    //Exit Sleep 
+        delayms(120); 
+				
+        LCD_WR_REG(0x29);    //Display on 
+        LCD_WR_REG(0x2c); 
+
+}
 
 
 
 int main(void)
 {
-
-while(1);
+	LCD_Init();
+	LED_Init();
+	LCD_fInit();
+	LCD_Clear(0x0000);
+	GPIO_SetBits(GPIOG,GPIO_Pin_14);
+	
+	
+	
+	LCD_Clear(0xAAAA);
 }

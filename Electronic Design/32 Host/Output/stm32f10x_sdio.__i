@@ -1,5 +1,0 @@
--c --cpu Cortex-M3 -D__EVAL -g -O0 --apcs=interwork -I.\CMSIS -I.\FWlib\inc -I.\FWlib\src -I.\USER 
--I C:\Keil\ARM\RV31\INC 
--I C:\Keil\ARM\CMSIS\Include 
--I C:\Keil\ARM\Inc\ST\STM32F10x 
--DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD -o ".\Output\stm32f10x_sdio.o" --omf_browse ".\Output\stm32f10x_sdio.crf" --depend ".\Output\stm32f10x_sdio.d" "FWlib\src\stm32f10x_sdio.c"
