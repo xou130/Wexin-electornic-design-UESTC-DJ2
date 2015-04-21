@@ -6,8 +6,14 @@
 .\Output\main.o: .\USER\stm32f10x_conf.h
 .\Output\main.o: .\FWlib\inc\stm32f10x_dbgmcu.h
 .\Output\main.o: .\CMSIS\stm32f10x.h
+.\Output\main.o: .\FWlib\inc\stm32f10x_exti.h
 .\Output\main.o: .\FWlib\inc\stm32f10x_gpio.h
 .\Output\main.o: .\FWlib\inc\stm32f10x_i2c.h
 .\Output\main.o: .\FWlib\inc\stm32f10x_rcc.h
 .\Output\main.o: .\FWlib\inc\stm32f10x_spi.h
+.\Output\main.o: .\FWlib\inc\stm32f10x_tim.h
+.\Output\main.o: .\FWlib\inc\stm32f10x_usart.h
 .\Output\main.o: .\FWlib\inc\misc.h
+.\Output\main.o: USER\sys.h
+.\Output\main.o: USER\LCD.h
+.\Output\main.o: C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h

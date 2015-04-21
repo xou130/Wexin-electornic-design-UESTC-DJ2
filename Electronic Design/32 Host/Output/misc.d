@@ -7,8 +7,11 @@
 .\Output\misc.o: .\USER\stm32f10x_conf.h
 .\Output\misc.o: .\FWlib\inc\stm32f10x_dbgmcu.h
 .\Output\misc.o: .\CMSIS\stm32f10x.h
+.\Output\misc.o: .\FWlib\inc\stm32f10x_exti.h
 .\Output\misc.o: .\FWlib\inc\stm32f10x_gpio.h
 .\Output\misc.o: .\FWlib\inc\stm32f10x_i2c.h
 .\Output\misc.o: .\FWlib\inc\stm32f10x_rcc.h
 .\Output\misc.o: .\FWlib\inc\stm32f10x_spi.h
+.\Output\misc.o: .\FWlib\inc\stm32f10x_tim.h
+.\Output\misc.o: .\FWlib\inc\stm32f10x_usart.h
 .\Output\misc.o: .\FWlib\inc\misc.h

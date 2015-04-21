@@ -1,0 +1,38 @@
+//tftµÄhelloworld Ö÷º¯Êý
+
+{
+	int i=0,j;
+	u16 k;
+	LCD_SPI_Init();
+	LED_Init();
+	LCD_fInit();
+	GPIO_SetBits(GPIOG,GPIO_Pin_14);	
+	LCD_Clear(YELLOW);
+	LCD_ShowString(0,160,"Hello World!");
+	GPIO_ResetBits(GPIOG,GPIO_Pin_14);
+	while(1){
+		GPIO_SetBits(GPIOG,GPIO_Pin_14);
+		LCD_DrawLine(0,0,i,100);
+		GPIO_ResetBits(GPIOG,GPIO_Pin_14);
+		i++;
+		if(i>240)break;
+}
+LCD_ShowChar(200,160,'@',1);
+for(i=0;i<255;i++)LCD_DrawLine(i,0,240,100);
+Draw_Circle(180,150,50);
+delayms(10000);
+/*while(1){
+	LCD_Clear(k);
+	k++;
+	if(k>0xffff)k=0;
+}*/BACK_COLOR=0xa651;
+	LCD_Clear(0xA651);LCD_ShowString(0,000,"(0,0)");LCD_DrawPoint(0,0);LCD_ShowString(0,100,"(0,100)");
+LCD_DrawPoint(0,100);LCD_ShowString(100,0,"(100,0)");LCD_DrawPoint(100,0);
+LCD_ShowString(100,100,"(100,100)");LCD_DrawPoint_big(100,100);
+	LCD_ShowString(0,160,"Hello World!");
+	LCD_Show2Num(100,117,99,2);
+}
+
+
+
+//
