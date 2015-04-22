@@ -217,7 +217,7 @@ void LCD_SPI_Init()
 
 u8 LCD_Writ_Bus(u8 da)
 {
-	while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);  ////!!!!currently stack here
+	while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
 	SPI_I2S_SendData(SPI2, da);
 	while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_RXNE) == RESET);
 	return SPI_I2S_ReceiveData(SPI2);
