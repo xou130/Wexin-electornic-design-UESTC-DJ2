@@ -229,10 +229,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>1</ColumnNumber>
+      <ColumnNumber>9</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>65</TopLine>
-      <CurrentLine>24</CurrentLine>
+      <TopLine>149</TopLine>
+      <CurrentLine>6</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\USER\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -463,8 +463,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>272</TopLine>
+      <CurrentLine>281</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\FWlib\src\stm32f10x_gpio.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_gpio.c</FilenameWithoutPath>
@@ -575,8 +575,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>563</TopLine>
-      <CurrentLine>570</CurrentLine>
+      <TopLine>422</TopLine>
+      <CurrentLine>427</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\FWlib\src\stm32f10x_spi.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_spi.c</FilenameWithoutPath>

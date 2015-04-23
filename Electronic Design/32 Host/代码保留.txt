@@ -35,4 +35,53 @@ LCD_ShowString(100,100,"(100,100)");LCD_DrawPoint_big(100,100);
 
 
 
-//
+//tft的 定时炸弹 中断及主函数
+
+
+int main(void)
+{int K1;int rx;
+	Timer_Init();
+	LED_Init();
+LCD_SPI_Init();
+LCD_fInit();
+LCD_Clear(0xFFFF);
+LCD_ShowString(0,0,"Test of Timer & 24L01");
+	GPIO_SetBits(GPIOG,GPIO_Pin_14);
+	SPI_24L01_SPI_Init();
+	receive_mode_init();
+	L01_SPI_RW(0);
+	GPIO_ResetBits(GPIOG,GPIO_Pin_14);
+	LCD_ShowString(0,100,"24L01 Send Data Success! Read Data Following:");
+	
+	LCD_ShowNum(200,116,rx,3);
+while(1){
+K1=GPIO_ReadInputDataBit(GPIOE,GPIO_Pin_0);
+	if(K1)GPIO_ResetBits(GPIOG,GPIO_Pin_14);
+	else GPIO_SetBits(GPIOG,GPIO_Pin_14);
+}
+
+}
+
+
+
+void TIM3_IRQHandler(void)//enter every 1 second
+{
+TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
+LCD_ShowNum(80,144,time,5);
+time--;
+	if(time<0){
+		BACK_COLOR=RED;
+RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3,DISABLE);
+		LCD_Clear(RED);
+		LCD_ShowString(90,144,"Boom!");
+		LCD_ShowString(40,230,"\\(^o^)/");
+		LCD_ShowString(120,246,"\\(^o^)/");
+		LCD_ShowString(50,20,"\\(^o^)/");
+		LCD_ShowString(170,36,"\\(^o^)/");
+		LCD_ShowChar(100,100,'*',1);
+		LCD_ShowChar(100,190,'*',1);
+		LCD_ShowChar(50,144,'*',1);
+		LCD_ShowChar(160,144,'*',1);
+}
+
+}

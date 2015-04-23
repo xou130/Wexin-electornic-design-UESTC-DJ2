@@ -17,3 +17,4 @@
 .\Output\main.o: USER\sys.h
 .\Output\main.o: USER\LCD.h
 .\Output\main.o: C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
+.\Output\main.o: USER\24l01.h
